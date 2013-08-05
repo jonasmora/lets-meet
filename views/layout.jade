@@ -1,5 +1,5 @@
 doctype 5
-html
+html(ng-app='letsMeet')
   head
     title= title
     link(rel='stylesheet', href='/css/style.css')
@@ -9,5 +9,9 @@ html
     //- See: https://developers.google.com/apis/maps/documentation/javascript/basics#SpecifyingSensor
     script(src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true", type="text/javascript")
     script(src="/js/geolocation.js", type="text/javascript")
-  body
+
+    script(src="/js/lib/angular/angular.js")
+    script(src="/js/controllers.js")
+
+  body(ng-controller="GeolocationListCtrl")
     block content
