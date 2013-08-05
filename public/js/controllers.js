@@ -13,4 +13,19 @@ function GeolocationListCtrl($scope) {
     zoom: 8, // the zoom level
   });
 
+  $scope.geolocationAvailable = navigator.geolocation ? true : false;
+
+  $scope.findMe = function() {
+    if ($scope.geolocationAvailable) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        $scope.center = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        };
+        $scope.$apply();
+      }, function () {
+      });
+    }
+  };
+
 }
