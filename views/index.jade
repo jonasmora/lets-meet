@@ -4,13 +4,13 @@ block content
   h1= title
   p Welcome to #{title}
 
-  div(id="map-canvas")
+  div(class="google-map", center="center", draggable="true", zoom="zoom", markers="markers", mark-click="true", style="height: 400px")
 
   //- Include the maps javascript with sensor=true because this code is using a
   //- sensor (a GPS locator) to determine the user's location.
   //- See: https://developers.google.com/apis/maps/documentation/javascript/basics#SpecifyingSensor
   script(src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true", type="text/javascript")
-  script(src="/js/geolocation.js", type="text/javascript")
 
   script(src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular.min.js")
+  script(src="/js/angular-google-maps.js")
   script(src="/js/controllers.js")
