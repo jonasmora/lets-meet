@@ -13,9 +13,7 @@ function GeolocationListCtrl($scope, $http, $log) {
     zoom: 12, // the zoom level
   });
 
-  $scope.geolocationAvailable = navigator.geolocation ? true : false;
-
-  if ($scope.geolocationAvailable) {
+  if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(position) {
       var latitude = position.coords.latitude;
       var longitude = position.coords.longitude;
