@@ -25,6 +25,7 @@ function GeolocationListCtrl($scope, $http, $log) {
       };
       $http.post('/api/markers', {latitude: latitude, longitude: longitude, label: $scope.label}).
         success(function(data) {
+          $log.log(data);
         });
       $scope.$apply();
     }, function() {

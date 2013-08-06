@@ -9,15 +9,23 @@ var Marker = mongoose.model('Marker', markerSchema);
 
 exports.list = function(req, res) {
   Marker.find({}, function(err, markers) {
-    if (!err) {
-      res.json({markers: markers});
-    }
-    else { throw err; }
+    if (err) throw err;
+    res.json({markers: markers});
   });
 };
 
 exports.create = function (req, res) {
-  var marker = new Marker(req.body);
-  marker.save();
-  res.json({marker: marker});
+  console.log("Session: %j", req.session);
+  if (!req.session.markerId) {
+    var marker = new Marker(req.body);
+    marker.save();
+    res.json({marker: marker});
+    req.session.markerId = marker._id
+  }
+  else {
+    Marker.findOne({_id: req.session.markerId}, function(err, marker) {
+      if (err) throw err;
+      res.json({marker: marker});
+    });
+  }
 };
