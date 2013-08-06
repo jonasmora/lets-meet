@@ -37,6 +37,7 @@ app.get('/', routes.index);
 
 app.get('/api/markers', markers.list);
 app.post('/api/markers', markers.create);
+app.put('/api/markers/:id', markers.update);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

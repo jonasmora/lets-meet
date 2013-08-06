@@ -14,8 +14,8 @@ exports.list = function(req, res) {
   });
 };
 
-exports.create = function (req, res) {
-  console.log("Session: %j", req.session);
+exports.create = function(req, res) {
+  // consoe.log("Session: %j", req.session);
   if (!req.session.markerId) {
     var marker = new Marker(req.body);
     marker.save();
@@ -28,4 +28,17 @@ exports.create = function (req, res) {
       res.json({marker: marker});
     });
   }
+};
+
+exports.update = function(req, res) {
+  // console.log("Session: %j", req.session);
+  Marker.findOne({_id: req.session.markerId}, function(err, marker) {
+    if (err) throw err;
+    Object.keys(req.body).forEach(function(key) {
+      var value = req.body[key];
+      marker[key] = value;
+    });
+    marker.save();
+    res.json({marker: marker});
+  });
 };

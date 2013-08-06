@@ -23,9 +23,12 @@ function GeolocationListCtrl($scope, $http, $log) {
         latitude: latitude,
         longitude: longitude
       };
-      $http.post('/api/markers', {latitude: latitude, longitude: longitude, label: $scope.label}).
+      $http.post('/api/markers', {latitude: latitude, longitude: longitude, label: $scope.markerLabel}).
         success(function(data) {
-          $log.log(data);
+          $scope.markerId = data.marker._id;
+          $scope.markerLabel = data.marker.label;
+          // $log.log("Create Marker Callback");
+          // $log.log(data);
         });
       $scope.$apply();
     }, function() {
@@ -47,5 +50,22 @@ function GeolocationListCtrl($scope, $http, $log) {
       });
       $scope.markers = data.markers;
     });
+
+  $scope.updateMarker = function() {
+    $http.put('/api/markers/' + $scope.markerId, {label: $scope.markerLabel}).
+      success(function(data) {
+        if (data.marker.label) {
+          angular.forEach($scope.markers, function(v, i) {
+            if (v._id == data.marker._id) {
+              v.infoWindow = data.marker.label;
+              return;
+            }
+          });
+        }
+        // $log.log("Update Marker Callback");
+        // $log.log(data);
+        // $log.log($scope.markers);
+      });
+  };
 
 }
