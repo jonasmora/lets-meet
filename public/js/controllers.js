@@ -25,16 +25,26 @@ function GeolocationListCtrl($scope, $http, $log) {
       };
       $http.post('/api/markers', {latitude: latitude, longitude: longitude, label: $scope.label}).
         success(function(data) {
-          angular.forEach(data.markers, function(v, i) {
-            if (v.label) {
-              v.infoWindow = new google.maps.InfoWindow({content: v.label});
-            }
-          });
-          $scope.markers = data.markers;
         });
       $scope.$apply();
     }, function() {
     });
   }
+
+  $http.get('/api/markers').
+    success(function(data) {
+      if (data.markers.length > 1) {
+        $scope.center = {
+          latitude: data.markers[0].latitude,
+          longitude: data.markers[0].longitude
+        };
+      }
+      angular.forEach(data.markers, function(v, i) {
+        if (v.label) {
+          v.infoWindow = v.label;
+        }
+      });
+      $scope.markers = data.markers;
+    });
 
 }
