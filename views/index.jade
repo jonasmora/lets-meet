@@ -4,10 +4,7 @@ block content
   h1= title
   p Welcome to #{title}
 
-  input(type="text", ng-model="name", class="input-mini")
-
-  a(class="btn", ng-click="findMe()", href="#")
-    i(class="icon-screenshot") Find me
+  input(type="text", ng-model="label", class="input-mini")
 
   div(class="google-map", center="center", draggable="true", zoom="zoom", markers="markers", mark-click="true", style="height: 400px")
 

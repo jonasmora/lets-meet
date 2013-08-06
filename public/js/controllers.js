@@ -2,7 +2,7 @@
   var module = angular.module("letsMeet", ["google-maps"]);
 }());
 
-function GeolocationListCtrl($scope) {
+function GeolocationListCtrl($scope, $http, $log) {
 
   angular.extend($scope, {
     center: {
@@ -10,22 +10,31 @@ function GeolocationListCtrl($scope) {
       longitude: 0, // initial map center longitude
     },
     markers: [], // an array of markers,
-    zoom: 8, // the zoom level
+    zoom: 12, // the zoom level
   });
 
   $scope.geolocationAvailable = navigator.geolocation ? true : false;
 
-  $scope.findMe = function() {
-    if ($scope.geolocationAvailable) {
-      navigator.geolocation.getCurrentPosition(function(position) {
-        $scope.center = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude
-        };
-        $scope.$apply();
-      }, function () {
-      });
-    }
-  };
+  if ($scope.geolocationAvailable) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      var latitude = position.coords.latitude;
+      var longitude = position.coords.longitude;
+      $scope.center = {
+        latitude: latitude,
+        longitude: longitude
+      };
+      $http.post('/api/markers', {latitude: latitude, longitude: longitude, label: $scope.label}).
+        success(function(data) {
+          angular.forEach(data.markers, function(v, i) {
+            if (v.label) {
+              v.infoWindow = new google.maps.InfoWindow({content: v.label});
+            }
+          });
+          $scope.markers = data.markers;
+        });
+      $scope.$apply();
+    }, function() {
+    });
+  }
 
 }
