@@ -4,18 +4,50 @@
 
 function GeolocationListCtrl($scope, $timeout, $http, $log) {
 
+  // Enable the new Google Maps visuals until it gets enabled by default.
+  // See http://googlegeodevelopers.blogspot.ca/2013/05/a-fresh-new-look-for-maps-api-for-all.html
+  google.maps.visualRefresh = true;
+
   angular.extend($scope, {
-    center: {
-      latitude: 0, // initial map center latitude
-      longitude: 0, // initial map center longitude
+
+    position: {
+      coords: {
+        latitude: 45,
+        longitude: -73
+      }
     },
-    markers: [], // an array of markers,
-    zoom: 12, // the zoom level
+
+    /** the initial center of the map */
+    centerProperty: {
+      latitude: 45,
+      longitude: -73
+    },
+
+    /** the initial zoom level of the map */
+    zoomProperty: 12,
+
+    /** list of markers to put in the map */
+    markersProperty: [{
+      latitude: 45,
+      longitude: -74
+    }],
+
+    // These 2 properties will be set when clicking on the map
+    clickedLatitudeProperty: null,
+    clickedLongitudeProperty: null,
+
+    eventsProperty: {
+      click: function (mapModel, eventName, originalEventArgs) {
+        // 'this' is the directive's scope
+        $log.log("user defined event on map directive with scope", this);
+        $log.log("user defined event: " + eventName, mapModel, originalEventArgs);
+      }
+    }
   });
 
   function onTimeout() {
-    postMarker();
-    getMarkers();
+    // postMarker();
+    // getMarkers();
     // $timeout(onTimeout, 5000);
   }
 

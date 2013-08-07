@@ -6,7 +6,18 @@ block content
 
   input(type="text", ng-model="markerLabel", ng-change="updateMarkerLabel()", class="input-mini")
 
-  div(class="google-map", center="center", draggable="true", zoom="zoom", markers="markers", mark-click="true", style="height: 400px")
+  div(
+    class="google-map",
+    center="position.coords",
+    zoom="zoomProperty" ,
+    markers="markersProperty",
+    latitude="clickedLatitudeProperty",
+    longitude="clickedLongitudeProperty",
+    mark-click="true",
+    draggable="true",
+    fit="false",
+    events="eventsProperty",
+    style="height: 1000px; width: 100%")
 
   //- Include the maps javascript with sensor=true because this code is using a
   //- sensor (a GPS locator) to determine the user's location.
