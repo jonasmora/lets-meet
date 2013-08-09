@@ -4,7 +4,16 @@ block content
   h1= title
   p Welcome to #{title}
 
-  input(type="text", ng-model="markerLabel", ng-change="updateMarkerLabel()", class="input-mini")
+  form
+    div
+      label Reveal Map
+      input(type="checkbox", ng-model="enableSync", ng-change="updateEnableSync()")
+    div
+      label I'm
+      input(type="text", ng-model="myInfoWindow", ng-change="updateMyInfoWindow()")
+    div
+      label Meet At
+      input(type="text", ng-model="meetInfoWindow", ng-change="updateMeetInfoWindow()")
 
   div(
     class="google-map",

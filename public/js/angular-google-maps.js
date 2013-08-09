@@ -202,7 +202,7 @@
         }
 
         if (infoWindowContent != null) {
-          var infoWindow = new google.maps.InfoWindow({
+          marker.infoWindow = new google.maps.InfoWindow({
             content: infoWindowContent
           });
 
@@ -210,8 +210,8 @@
             if (currentInfoWindow != null) {
               currentInfoWindow.close();
             }
-            infoWindow.open(_instance, marker);
-            currentInfoWindow = infoWindow;
+            marker.infoWindow.open(_instance, marker);
+            currentInfoWindow = marker.infoWindow;
           });
         }
         
@@ -233,6 +233,38 @@
         // Return marker instance
         return marker;
       };      
+
+      this.updateMarker = function (lat, lng, icon, infoWindowContent, label, url,
+          thumbnail) {
+
+        var marker = that.findMarker(lat, lng);
+        
+        if (marker == null) {
+          return;
+        }
+
+        if (marker.icon != icon) {
+          marker.setIcon(icon);
+        }
+        if (marker.infoWindow) {
+          if (marker.infoWindow.content != infoWindowContent) {
+            marker.infoWindow.content = infoWindowContent;
+            // Refresh marker info window if it's the current one
+            if (marker.infoWindow == currentInfoWindow) {
+              currentInfoWindow.close();
+              currentInfoWindow.open(_instance, marker);
+            } 
+          }
+        }
+        else {
+          marker.infoWindow = new google.maps.InfoWindow({
+            content: infoWindowContent
+          });  
+        }
+
+        // Return marker instance
+        return marker;
+      };
       
       this.findMarker = function (lat, lng) {
         for (var i = 0; i < _markers.length; i++) {
@@ -415,43 +447,45 @@
           });
         });
         
-        if (angular.isDefined(scope.events)) {
-          for (var eventName in scope.events) {
-            if (scope.events.hasOwnProperty(eventName) && angular.isFunction(scope.events[eventName])) {
-              _m.on(eventName, function () {
-                scope.events[eventName].apply(scope, [_m, eventName, arguments]);
-              });
-            }
-          }
-        }
-        
         if (attrs.markClick == "true") {
           (function () {
             var cm = null;
             
             _m.on("click", function (e) {                         
-              if (cm == null) {
+              // console.log("mark Click!");
+              // if (cm == null) {
                 
-                cm = {
-                  latitude: e.latLng.lat(),
-                  longitude: e.latLng.lng() 
-                };
+              //   cm = {
+              //     latitude: e.latLng.lat(),
+              //     longitude: e.latLng.lng() 
+              //   };
                 
-                scope.markers.push(cm);
-              }
-              else {
-                cm.latitude = e.latLng.lat();
-                cm.longitude = e.latLng.lng();
-              }
+              //   scope.markers.push(cm);
+              // }
+              // else {
+              //   cm.latitude = e.latLng.lat();
+              //   cm.longitude = e.latLng.lng();
+              // }
               
               
-              $timeout(function () {
-                scope.latitude = cm.latitude;
-                scope.longitude = cm.longitude;
-                scope.$apply();
-              });
+              // $timeout(function () {
+              scope.latitude = e.latLng.lat();
+              scope.longitude = e.latLng.lng();
+              //   scope.$apply();
+              // });
             });
           }());
+        }
+        
+        if (angular.isDefined(scope.events)) {
+          for (var eventName in scope.events) {
+            if (scope.events.hasOwnProperty(eventName) && angular.isFunction(scope.events[eventName])) {
+              _m.on(eventName, function () {
+                // console.log(eventName + "!");
+                scope.events[eventName].apply(scope, [scope, _m, eventName, arguments]);
+              });
+            }
+          }
         }
         
         // Put the map into the scope
@@ -478,6 +512,9 @@
             angular.forEach(newValue, function (v, i) {
               if (!_m.hasMarker(v.latitude, v.longitude)) {
                 _m.addMarker(v.latitude, v.longitude, v.icon, v.infoWindow);
+              }
+              else {
+                _m.updateMarker(v.latitude, v.longitude, v.icon, v.infoWindow);
               }
             });
             

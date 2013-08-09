@@ -4,7 +4,7 @@
 
 var mongoose = require('mongoose');
 
-var markerSchema = mongoose.Schema({latitude: 'number', longitude: 'number', label: 'string'});
+var markerSchema = mongoose.Schema({latitude: 'number', longitude: 'number', infoWindow: 'string', type: 'string'});
 var Marker = mongoose.model('Marker', markerSchema);
 
 exports.list = function(req, res) {
@@ -15,24 +15,48 @@ exports.list = function(req, res) {
 };
 
 exports.create = function(req, res) {
-  // consoe.log("Session: %j", req.session);
-  if (!req.session.markerId) {
-    var marker = new Marker(req.body);
-    marker.save();
-    res.json({marker: marker});
-    req.session.markerId = marker._id
-  }
-  else {
-    Marker.findOne({_id: req.session.markerId}, function(err, marker) {
+  console.log("Session: %j", req.session);
+  if (req.body.type == 'meetMarker') {
+    Marker.findOne({type: req.body.type}, function(err, marker) {
       if (err) throw err;
+      if (marker) {
+        Object.keys(req.body).forEach(function(key) {
+          var value = req.body[key];
+          marker[key] = value;
+        });
+        marker.save();
+      }
+      else {
+        marker = new Marker(req.body);
+        marker.save();
+      }
       res.json({marker: marker});
     });
+  }
+  else {
+    if (!req.session[req.body.type]) {
+      var marker = new Marker(req.body);
+      marker.save();
+      res.json({marker: marker});
+      req.session[req.body.type] = marker._id
+    }
+    else {
+      Marker.findOne({_id: req.session[req.body.type]}, function(err, marker) {
+        if (err) throw err;
+        Object.keys(req.body).forEach(function(key) {
+          var value = req.body[key];
+          marker[key] = value;
+        });
+        marker.save();
+        res.json({marker: marker});
+      });
+    }
   }
 };
 
 exports.update = function(req, res) {
   // console.log("Session: %j", req.session);
-  Marker.findOne({_id: req.session.markerId}, function(err, marker) {
+  Marker.findOne({_id: req.params.id}, function(err, marker) {
     if (err) throw err;
     Object.keys(req.body).forEach(function(key) {
       var value = req.body[key];
