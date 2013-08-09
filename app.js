@@ -6,6 +6,7 @@
 var express = require('express')
   , routes = require('./routes')
   , markers = require('./routes/markers')
+  , socket = require('./routes/socket')
   , http = require('http')
   , path = require('path');
 
@@ -39,6 +40,13 @@ app.get('/api/markers', markers.list);
 app.post('/api/markers', markers.create);
 app.put('/api/markers/:id', markers.update);
 
-http.createServer(app).listen(app.get('port'), function(){
+var server = http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
+
+// Hook Socket.io into Express
+var io = require('socket.io').listen(server);
+
+// Socket.io Communication
+
+io.sockets.on('connection', socket);

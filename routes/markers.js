@@ -2,10 +2,7 @@
  * Serve JSON to our AngularJS client
  */
 
-var mongoose = require('mongoose');
-
-var markerSchema = mongoose.Schema({latitude: 'number', longitude: 'number', infoWindow: 'string', type: 'string'});
-var Marker = mongoose.model('Marker', markerSchema);
+var Marker = require("../models/marker").Marker;
 
 exports.list = function(req, res) {
   Marker.find({}, function(err, markers) {
@@ -15,7 +12,7 @@ exports.list = function(req, res) {
 };
 
 exports.create = function(req, res) {
-  console.log("Session: %j", req.session);
+  // console.log("Session: %j", req.session);
   if (req.body.type == 'meetMarker') {
     Marker.findOne({type: req.body.type}, function(err, marker) {
       if (err) throw err;

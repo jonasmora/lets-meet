@@ -6,6 +6,7 @@
     "start": "node app.js"
   },
   "dependencies": {
+    "socket.io": "~0.9.16",
     "express": "3.3.4",
     "jade": "*",
     "stylus": "*",
