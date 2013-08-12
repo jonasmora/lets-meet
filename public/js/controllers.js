@@ -84,14 +84,14 @@ function GeolocationListCtrl($scope, socket, $cookies, $timeout, $http, $log) {
 
   function configMarker(marker) {
     if ($scope.peopleMarker && marker._id == $scope.peopleMarker._id) {
-      marker.icon = "http://maps.google.com/mapfiles/ms/icons/green-dot.png";
+      marker.icon = 'http://maps.google.com/mapfiles/ms/icons/green-dot.png';
     }
     else if (marker.type == 'meetMarker') {
       $scope.meetMarker = marker;
-      marker.icon = "http://maps.google.com/mapfiles/ms/icons/red-dot.png";
+      marker.icon = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
     }
     else {
-      marker.icon = "http://maps.google.com/mapfiles/ms/icons/blue-dot.png";
+      marker.icon = 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png';
     }
   }
 
@@ -132,15 +132,18 @@ function GeolocationListCtrl($scope, socket, $cookies, $timeout, $http, $log) {
     }
     else {
       e.name = 'markers:update';
-      e.data = {_id: $scope[type]._id};
+      e.data = {type: type, _id: $scope[type]._id};
     }
     e.data.latitude = lat;
     e.data.longitude = lng;
+
+    // $log.log("e: ", e);
 
     socket.emit(e.name, e.data, pushCallback);
   }
 
   function pushCallback(marker) {
+    // $log.log("marker: ", marker);
     $scope[marker.type] = marker;
     configMarker(marker);
     $cookies[marker.type] = JSON.stringify(marker);
