@@ -28,3 +28,24 @@ app.factory('socket', function ($rootScope) {
     }
   };
 });
+
+// app.provider('$cookieStore', function() {
+//   this.$get = function() {
+//     return {
+//       get: function(name) {
+//         return $.cookie(name);
+//       },
+//       set: function(name, value, options) {
+//         if (options && options.expires) {
+//           $.cookie(name, value, {expires: options.expires});
+//         }
+//         else {
+//           $.cookie(name, value);
+//         }
+//       },
+//       remove: function(name) {
+//         $.removeCookie(name);
+//       }
+//     }
+//   };
+// });

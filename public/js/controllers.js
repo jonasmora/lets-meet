@@ -3,7 +3,7 @@
 /* Controllers */
 
 
-function GeolocationListCtrl($scope, $timeout, $http, $log) {
+function GeolocationListCtrl($scope, socket, $cookies, $timeout, $http, $log) {
 
   // Enable the new Google Maps visuals until it gets enabled by default.
   // See http://googlegeodevelopers.blogspot.ca/2013/05/a-fresh-new-look-for-maps-api-for-all.html
@@ -28,171 +28,140 @@ function GeolocationListCtrl($scope, $timeout, $http, $log) {
     longitude: null,
 
     events: {
-      click: function (scope, mapModel, eventName, originalEventArgs) {
-        // 'this' is the directive's scope
-        // console.log("my Click!");
-
-        // Object.keys(scope).forEach(function(key) {
-        //   var value = scope[key];
-        //   console.log(key + ": " + value);
-        // });
-
-        // $log.log("$scope.markers.length: " + $scope.markers.length);
-        // // $log.log("POST meet marker");
-        // $log.log($scope.markers);
-
-        postMeetMarker(scope.latitude, scope.longitude);
+      click: function() {
+        pushMarker('meetMarker', $scope.latitude, $scope.longitude);
       }
     }
   });
 
-  $scope.enableSync = true;
+  // Load marker from previous session
+  watchPosition();
 
-  function onTimeout() {
-    postMarker();
-    getMarkers();
-    $scope.timeout = $timeout(onTimeout, 3000);
-  }
+  // Socket listeners
+  // ================
 
-  onTimeout();
+  socket.on('init', function(data) {
+    $scope.markers = data;
+    configMarkers();
+  });
 
-  function isMyMarker(marker) {
-    return $scope.myMarker && marker._id == $scope.myMarker._id;
-  }
+  socket.on('markers:create', function(data) {
+    var index = findMarkerIndex(data);
+    if (index == -1) {
+      $scope.markers.push(data);
+    }
+  });
 
-  function isMeetMarker(marker) {
-    return marker.type == 'meetMarker';
+  socket.on('markers:update', function(data) {
+    var index = findMarkerIndex(data);
+    if (index != -1) {
+      $scope.markers[index] = data;
+    }
+  });
+
+  socket.on('markers:delete', function(data) {
+    var index = findMarkerIndex(data);
+    if (index != -1) {
+      $scope.markers.splice(index, 1);
+    }
+  });
+
+  // Private helpers
+  // ===============
+
+  function findMarkerIndex(marker) {
+    var index = -1;
+
+    angular.forEach($scope.markers, function(m, i) {
+      if (m._id == marker._id) {
+        index = i;
+        return;
+      }
+    });
+
+    return index;
   }
 
   function configMarker(marker) {
-    if (isMyMarker(marker)) {
+    if ($scope.peopleMarker && marker._id == $scope.peopleMarker._id) {
       marker.icon = "http://maps.google.com/mapfiles/ms/icons/green-dot.png";
     }
-    else if (isMeetMarker(marker)) {
+    else if (marker.type == 'meetMarker') {
       $scope.meetMarker = marker;
-      $scope.meetInfoWindow = marker.infoWindow;
       marker.icon = "http://maps.google.com/mapfiles/ms/icons/red-dot.png";
     }
     else {
       marker.icon = "http://maps.google.com/mapfiles/ms/icons/blue-dot.png";
     }
-    marker.id = marker._id;
-    marker.infoWindow = marker.infoWindow;
   }
 
-  function configMarkers(markers) {
-    angular.forEach(markers, function(marker, index) {
+  function configMarkers() {
+    angular.forEach($scope.markers, function(marker, index) {
       configMarker(marker);
     });
   }
 
-  function findMarkerIndex(marker) {
-    angular.forEach($scope.markers, function(v, i) {
-      if (v._id == marker._id) {
-        return i;
-      }
-    });
-    return -1;
-  }
-
-  function postMarker() {
+  function watchPosition() {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function(position) {
-        var latitude = position.coords.latitude;
-        var longitude = position.coords.longitude;
+      navigator.geolocation.watchPosition(function(position) {
+        var lat = position.coords.latitude;
+        var lng = position.coords.longitude;
+
         $scope.center = {
-          type: 'peopleMarker',
-          latitude: latitude,
-          longitude: longitude,
-          infoWindow: $scope.myInfoWindow
+          latitude: lat,
+          longitude: lng
         };
-        $http.post('/api/markers', $scope.center).
-          success(function(data) {
-            $scope.myMarker = data.marker;
-            configMarker(data.marker);
-            var index = findMarkerIndex(data.marker);
-            if (index == -1) {
-              $scope.markers.push(data.marker);
-            }
-            else {
-              $scope.markers[i] = data.marker;
-            }
-            $scope.myInfoWindow = data.marker.infoWindow;
-            // $log.log("POST my marker");
-            // $log.log("$scope.markers.length: " + $scope.markers.length);
-            // $log.log($scope.markers);
-          });
-        $scope.$apply();
-      }, function() {
+
+        pushMarker('peopleMarker', lat, lng);
       });
     }
   }
 
-  function getMarkers() {
-    $http.get('/api/markers').
-      success(function(data) {
-        configMarkers(data.markers);
-        $scope.markers = data.markers;
-        // $log.log("GET markers");
-        // $log.log("$scope.markers.length: " + $scope.markers.length);
-        // $log.log($scope.markers);
-      });
-  }
+  function pushMarker(type, lat, lng) {
+    var e = {};
 
-  function postMeetMarker(lat, lng) {
-    var data = {
-      type: 'meetMarker',
-      latitude: lat,
-      longitude: lng,
-      infoWindow: $scope.meetInfoWindow
-    };
-    $http.post('/api/markers', data).
-      success(function(data) {
-        $scope.meetMarker = data.marker;
-        configMarker(data.marker);
-        var index = findMarkerIndex(data.marker);
-        if (index == -1) {
-          $scope.markers.push(data.marker);
-        }
-        else {
-          $scope.markers[i] = data.marker;
-        }
-        $scope.meetInfoWindow = data.marker.infoWindow;
-        // $log.log("POST meet marker");
-        // $log.log("$scope.markers.length: " + $scope.markers.length);
-        // $log.log($scope.markers);
-      });
-  }
-
-  $scope.updateEnableSync = function() {
-    if ($scope.enableSync) {
-      onTimeout();
+    if (!$scope[type]) {
+      e.name = 'markers:create';
+      var m = JSON.parse($cookies[type]);
+      if (m) {
+        e.data = {type: type, infoWindow: m.infoWindow};
+      }
+      else {
+        e.data = {type: type};
+      }
     }
     else {
-      $timeout.cancel($scope.timeout);
+      e.name = 'markers:update';
+      e.data = {_id: $scope[type]._id};
+    }
+    e.data.latitude = lat;
+    e.data.longitude = lng;
+
+    socket.emit(e.name, e.data, pushCallback);
+  }
+
+  function pushCallback(marker) {
+    $scope[marker.type] = marker;
+    configMarker(marker);
+    $cookies[marker.type] = JSON.stringify(marker);
+    var index = findMarkerIndex(marker);
+    if (index != -1) {
+      $scope.markers[index] = marker;
+    }
+    else {
+      $scope.markers.push(marker);
     }
   }
 
-  $scope.updateMyInfoWindow = function() {
-    if ($scope.myMarker) {
-      $scope.myMarker.infoWindow = $scope.myInfoWindow;
-      $http.put('/api/markers/' + $scope.myMarker._id, $scope.myMarker).
-        success(function(data) {
-          $log.log(data);
-        });
-    }
+  // Methods published to the scope
+  // ==============================
+
+  $scope.updatePeopleMarker = function() {
+    socket.emit('markers:update', $scope.peopleMarker, pushCallback);
   }
 
-  $scope.updateMeetInfoWindow = function() {
-    $log.log("updateMeetInfoWindow");
-    $log.log($scope.meetMarker);
-    if ($scope.meetMarker) {
-      $scope.meetMarker.infoWindow = $scope.meetInfoWindow;
-      $http.put('/api/markers/' + $scope.meetMarker._id, $scope.meetMarker).
-        success(function(data) {
-          $log.log(data);
-        });
-    }
+  $scope.updateMeetMarker = function() {
+    socket.emit('markers:update', $scope.meetMarker, pushCallback);
   }
 
 }

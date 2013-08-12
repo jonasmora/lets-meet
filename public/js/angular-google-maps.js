@@ -452,41 +452,43 @@
             var cm = null;
             
             _m.on("click", function (e) {                         
-              // console.log("mark Click!");
-              // if (cm == null) {
+              if (cm == null) {
                 
-              //   cm = {
-              //     latitude: e.latLng.lat(),
-              //     longitude: e.latLng.lng() 
-              //   };
+                cm = {
+                  latitude: e.latLng.lat(),
+                  longitude: e.latLng.lng() 
+                };
                 
-              //   scope.markers.push(cm);
-              // }
-              // else {
-              //   cm.latitude = e.latLng.lat();
-              //   cm.longitude = e.latLng.lng();
-              // }
+                // scope.markers.push(cm);
+              }
+              else {
+                cm.latitude = e.latLng.lat();
+                cm.longitude = e.latLng.lng();
+              }
               
               
-              // $timeout(function () {
-              scope.latitude = e.latLng.lat();
-              scope.longitude = e.latLng.lng();
-              //   scope.$apply();
-              // });
+              $timeout(function () {
+                scope.latitude = e.latLng.lat();
+                scope.longitude = e.latLng.lng();
+                scope.$apply();
+
+                if (scope.events.hasOwnProperty('click') && angular.isFunction(scope.events['click'])) {
+                  scope.events['click'].apply(scope, [_m, 'click', arguments]);
+                }
+              });
             });
           }());
         }
         
-        if (angular.isDefined(scope.events)) {
-          for (var eventName in scope.events) {
-            if (scope.events.hasOwnProperty(eventName) && angular.isFunction(scope.events[eventName])) {
-              _m.on(eventName, function () {
-                // console.log(eventName + "!");
-                scope.events[eventName].apply(scope, [scope, _m, eventName, arguments]);
-              });
-            }
-          }
-        }
+        // if (angular.isDefined(scope.events)) {
+        //   for (var eventName in scope.events) {
+        //     if (scope.events.hasOwnProperty(eventName) && angular.isFunction(scope.events[eventName])) {
+        //       _m.on(eventName, function () {
+        //         scope.events[eventName].apply(scope, [_m, eventName, arguments]);
+        //       });
+        //     }
+        //   }
+        // }
         
         // Put the map into the scope
         scope.map = _m;
