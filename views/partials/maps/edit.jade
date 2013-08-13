@@ -1,0 +1,8 @@
+div(ng-controller="EditMapCtrl")
+  h2 Edit Map
+  label(for='title') Title:
+  input(ng-model='form.title', name='title')
+  p Description:
+  textarea(ng-model='form.description', cols='50', rows='15')
+  p
+    button(ng-click='editMap()') Edit Map

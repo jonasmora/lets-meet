@@ -2,7 +2,6 @@
 
 /* Directives */
 
-
 angular.module('letsMeet.directives', []).
   directive('input', function() {
     return {

@@ -2,6 +2,63 @@
 
 /* Controllers */
 
+function ListMapCtrl($scope, $http) {
+  $http.get('/api/maps').
+    success(function(data) {
+      $scope.maps = data.maps;
+    });
+}
+
+function NewMapCtrl($scope, $http, $location) {
+  $scope.form = {};
+  $scope.submitMap = function() {
+    $http.post('/api/maps', $scope.form).
+      success(function(data) {
+        $location.path('/');
+      });
+  };
+}
+
+function ShowMapCtrl($scope, $http, $routeParams) {
+  $http.get('/api/maps/' + $routeParams.id).
+    success(function(data) {
+      $scope.map = data.map;
+    });
+}
+
+function EditMapCtrl($scope, $http, $location, $routeParams) {
+  $scope.form = {};
+  $http.get('/api/maps/' + $routeParams.id).
+    success(function(data) {
+      $scope.form = data.map;
+    });
+
+  $scope.editMap = function () {
+    $http.put('/api/maps/' + $routeParams.id, $scope.form).
+      success(function(data) {
+        $location.url('/maps/' + $routeParams.id);
+      });
+  };
+}
+
+function DeleteMapCtrl($scope, $http, $location, $routeParams) {
+  $http.get('/api/maps/' + $routeParams.id).
+    success(function(data) {
+      $scope.map = data.map;
+    });
+
+  $scope.deleteMap = function() {
+    $http.delete('/api/maps/' + $routeParams.id).
+      success(function(data) {
+        console.log("data: ", data);
+        $location.url('/');
+      });
+  };
+
+  $scope.home = function() {
+    $location.url('/');
+  };
+}
 
 function GeolocationListCtrl($scope, socket, $cookies, $timeout, $http, $log) {
 

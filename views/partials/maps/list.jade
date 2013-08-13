@@ -1,0 +1,24 @@
+div(ng-controller="ListMapCtrl")
+  a(class="btn btn-success", href="/maps/new")
+    i(class="icon-globe icon-white")
+    | Create New Map
+  table(class="table table-striped")
+    thead
+      tr
+        th Map ID
+        th Map Title
+        th Actions
+    tbody
+      tr(ng-repeat="map in maps")
+        td {{ map._id }}
+        td {{ map.title }}
+        td
+          a(class="btn btn-small btn-primary", href="/maps/{{ map._id }}")
+            i(class="icon-map-marker icon-white")
+            | More
+          a(class="btn btn-small btn-primary", href="/maps/{{ map._id }}/edit")
+            i(class="icon-edit icon-white")
+            | Edit
+          a(class="btn btn-small btn-danger", href="/maps/{{ map._id }}/delete")
+            i(class="icon-remove icon-white")
+            | Delete

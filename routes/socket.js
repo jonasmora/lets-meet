@@ -1,3 +1,4 @@
+var Map = require("../models/map").Map;
 var Marker = require("../models/marker").Marker;
 
 // export function for listening to the socket

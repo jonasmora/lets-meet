@@ -1,34 +1,13 @@
 extends layout
 
-block content
-  h1= title
-  p Welcome to #{title}
+block body
+  div(class="container")
+    div(class="row")
+      div(class="span8 offset2")
+        div(class="hero-unit")
+          h1 Let's Meet
 
-  form
-    div
-      label My Marker
-      input(type="text", ng-model="peopleMarker.infoWindow", ng-change="updatePeopleMarker()")
-    div
-      label Meet Marker
-      input(type="text", ng-model="meetMarker.infoWindow", ng-change="updateMeetMarker()")
-
-  div(
-    class="google-map",
-    center="center",
-    zoom="zoom" ,
-    markers="markers",
-    latitude="latitude",
-    longitude="longitude",
-    mark-click="true",
-    draggable="true",
-    fit="false",
-    events="events",
-    style="height: 1000px; width: 100%")
-
-  //- Include the maps javascript with sensor=true because this code is using a
-  //- sensor (a GPS locator) to determine the user's location.
-  //- See: https://developers.google.com/apis/maps/documentation/javascript/basics#SpecifyingSensor
-  script(src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true", type="text/javascript")
+        div(ng-view)
 
   script(src='/socket.io/socket.io.js')
   script(src='/js/lib/angular/angular.min.js')

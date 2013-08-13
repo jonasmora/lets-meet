@@ -1,0 +1,8 @@
+div(ng-controller="DeleteMapCtrl")
+  h2 {{ map.title }}
+  div {{ map.description }}
+  p
+    | Are you sure you want to delete this map? 
+    button(ng-click='deleteMap()') Yes
+    |  - 
+    button(ng-click='home()') No thanks

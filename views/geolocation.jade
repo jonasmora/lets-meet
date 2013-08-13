@@ -1,0 +1,43 @@
+extends layout
+
+block content
+  div(ng-controller="GeolocationListCtrl")
+    h1= title
+    p Welcome to #{title}
+
+    form
+      div
+        label My Marker
+        input(type="text", ng-model="peopleMarker.infoWindow", ng-change="updatePeopleMarker()")
+      div
+        label Meet Marker
+        input(type="text", ng-model="meetMarker.infoWindow", ng-change="updateMeetMarker()")
+
+    div(
+      class="google-map",
+      center="center",
+      zoom="zoom" ,
+      markers="markers",
+      latitude="latitude",
+      longitude="longitude",
+      mark-click="true",
+      draggable="true",
+      fit="false",
+      events="events",
+      style="height: 1000px; width: 100%")
+
+  //- Include the maps javascript with sensor=true because this code is using a
+  //- sensor (a GPS locator) to determine the user's location.
+  //- See: https://developers.google.com/apis/maps/documentation/javascript/basics#SpecifyingSensor
+  script(src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true", type="text/javascript")
+
+  script(src='/socket.io/socket.io.js')
+  script(src='/js/lib/angular/angular.min.js')
+  script(src='/js/lib/angular-bootstrap/ui-bootstrap-tpls.min.js')
+  script(src='/js/lib/angular-bootstrap/ui-bootstrap.min.js')
+  script(src='/js/lib/angular-cookies/angular-cookies.min.js')
+  script(src='/js/angular-google-maps.js')
+  script(src='/js/app.js')
+  script(src='/js/controllers.js')
+  script(src='/js/directives.js')
+  script(src='/js/services.js')

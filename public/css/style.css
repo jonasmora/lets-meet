@@ -1,3 +1,7 @@
 body {
   padding: 50px;
 }
+a.btn,
+a.btn i {
+  margin-right: 4px;
+}

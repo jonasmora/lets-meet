@@ -5,7 +5,7 @@
 
 var express = require('express')
   , routes = require('./routes')
-  , markers = require('./routes/markers')
+  , maps = require('./routes/maps')
   , socket = require('./routes/socket')
   , http = require('http')
   , path = require('path');
@@ -34,11 +34,17 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
+// Routes
 app.get('/', routes.index);
+app.get('/maps*', routes.index);
+app.get('/partials/maps/:name', routes.maps);
 
-app.get('/api/markers', markers.list);
-app.post('/api/markers', markers.create);
-app.put('/api/markers/:id', markers.update);
+// Maps JSON API
+app.get('/api/maps', maps.list);
+app.post('/api/maps', maps.create);
+app.get('/api/maps/:id', maps.show);
+app.put('/api/maps/:id', maps.update);
+app.delete('/api/maps/:id', maps.delete);
 
 var server = http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
