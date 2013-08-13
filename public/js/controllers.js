@@ -123,16 +123,22 @@ function GeolocationListCtrl($scope, socket, $cookies, $timeout, $http, $log) {
     if (!$scope[type] || !$scope[type]._id) {
       e.name = 'markers:create';
       e.data = {type: type};
-      if ($cookies[type]) {
-        var m = JSON.parse($cookies[type]);
-        if (m) {
-          e.data.infoWindow = m.infoWindow;
+      if ($scope[type]) {
+        e.data.infoWindow = $scope[type].infoWindow;
+      }
+      else {
+        // delete $cookies[type];
+        if ($cookies[type]) {
+          var m = JSON.parse($cookies[type]);
+          if (m) {
+            e.data.infoWindow = m.infoWindow;
+          }
         }
       }
     }
     else {
       e.name = 'markers:update';
-      e.data = {type: type, _id: $scope[type]._id};
+      e.data = {type: type, _id: $scope[type]._id, infoWindow: $scope[type].infoWindow};
     }
     e.data.latitude = lat;
     e.data.longitude = lng;
