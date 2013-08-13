@@ -238,7 +238,7 @@
           thumbnail) {
 
         var marker = that.findMarker(lat, lng);
-        
+
         if (marker == null) {
           return;
         }
@@ -253,13 +253,13 @@
             if (marker.infoWindow == currentInfoWindow) {
               currentInfoWindow.close();
               currentInfoWindow.open(_instance, marker);
-            } 
+            }
           }
         }
         else {
           marker.infoWindow = new google.maps.InfoWindow({
             content: infoWindowContent
-          });  
+          });
         }
 
         // Return marker instance
@@ -447,6 +447,16 @@
           });
         });
         
+        if (angular.isDefined(scope.events)) {
+          for (var eventName in scope.events) {
+            if (scope.events.hasOwnProperty(eventName) && angular.isFunction(scope.events[eventName]) && eventName != 'click') {
+              _m.on(eventName, function () {
+                scope.events[eventName].apply(scope, [_m, eventName, arguments]);
+              });
+            }
+          }
+        }
+        
         if (attrs.markClick == "true") {
           (function () {
             var cm = null;
@@ -459,7 +469,7 @@
                   longitude: e.latLng.lng() 
                 };
                 
-                // scope.markers.push(cm);
+                scope.markers.push(cm);
               }
               else {
                 cm.latitude = e.latLng.lat();
@@ -468,8 +478,8 @@
               
               
               $timeout(function () {
-                scope.latitude = e.latLng.lat();
-                scope.longitude = e.latLng.lng();
+                scope.latitude = cm.latitude;
+                scope.longitude = cm.longitude;
                 scope.$apply();
 
                 if (scope.events.hasOwnProperty('click') && angular.isFunction(scope.events['click'])) {
@@ -479,16 +489,6 @@
             });
           }());
         }
-        
-        // if (angular.isDefined(scope.events)) {
-        //   for (var eventName in scope.events) {
-        //     if (scope.events.hasOwnProperty(eventName) && angular.isFunction(scope.events[eventName])) {
-        //       _m.on(eventName, function () {
-        //         scope.events[eventName].apply(scope, [_m, eventName, arguments]);
-        //       });
-        //     }
-        //   }
-        // }
         
         // Put the map into the scope
         scope.map = _m;
