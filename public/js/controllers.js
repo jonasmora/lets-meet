@@ -46,17 +46,11 @@ function GeolocationListCtrl($scope, socket, $cookies, $timeout, $http, $log) {
   });
 
   socket.on('markers:create', function(data) {
-    var index = findMarkerIndex(data);
-    if (index == -1) {
-      $scope.markers.push(data);
-    }
+    pushCallback(data, data.type == 'meetMarker');
   });
 
   socket.on('markers:update', function(data) {
-    var index = findMarkerIndex(data);
-    if (index != -1) {
-      $scope.markers[index] = data;
-    }
+    pushCallback(data, data.type == 'meetMarker');
   });
 
   socket.on('markers:delete', function(data) {
@@ -143,16 +137,18 @@ function GeolocationListCtrl($scope, socket, $cookies, $timeout, $http, $log) {
     e.data.latitude = lat;
     e.data.longitude = lng;
 
-    $log.log("e: ", e);
+    // $log.log("e: ", e);
 
-    socket.emit(e.name, e.data, pushCallback);
+    socket.emit(e.name, e.data, function(data) {
+      $scope[data.type] = data;
+      $cookies[data.type] = JSON.stringify(data);
+      pushCallback(data, true);
+    });
   }
 
-  function pushCallback(marker) {
-    $log.log("marker: ", marker);
-    $scope[marker.type] = marker;
+  function pushCallback(marker, update) {
+    // $log.log("marker: ", marker);
     configMarker(marker);
-    $cookies[marker.type] = JSON.stringify(marker);
     var index = findMarkerIndex(marker);
     if (index != -1) {
       $scope.markers[index] = marker;
@@ -166,11 +162,15 @@ function GeolocationListCtrl($scope, socket, $cookies, $timeout, $http, $log) {
   // ==============================
 
   $scope.updatePeopleMarker = function() {
-    pushMarker('peopleMarker');
+    if ($scope['peopleMarker'].infoWindow.length > 0) {
+      pushMarker('peopleMarker');
+    }
   }
 
   $scope.updateMeetMarker = function() {
-    pushMarker('meetMarker');
+    if ($scope['meetMarker'].infoWindow.length > 0) {
+      pushMarker('meetMarker');
+    }
   }
 
 }
