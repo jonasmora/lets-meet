@@ -6,7 +6,7 @@
 var express = require('express')
   , routes = require('./routes')
   , maps = require('./routes/maps')
-  , socket = require('./routes/socket')
+  , sockets = require('./routes/sockets')
   , http = require('http')
   , path = require('path');
 
@@ -54,5 +54,6 @@ var server = http.createServer(app).listen(app.get('port'), function(){
 var io = require('socket.io').listen(server);
 
 // Socket.io Communication
-
-io.sockets.on('connection', socket);
+io.sockets.on('connection', function(socket) {
+  sockets(io, socket);
+});

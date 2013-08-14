@@ -20,61 +20,22 @@ function NewMapCtrl($scope, $http, $location) {
 }
 
 function ShowMapCtrl($scope, $http, $routeParams, socket, $cookies, $log) {
-  $http.get('/api/maps/' + $routeParams.id).
-    success(function(data) {
-      $scope.map = data.map;
-    });
-
-  GeolocationCtrl($scope, socket, $cookies, $log);
-}
-
-function EditMapCtrl($scope, $http, $location, $routeParams) {
-  $scope.form = {};
-  $http.get('/api/maps/' + $routeParams.id).
-    success(function(data) {
-      $scope.form = data.map;
-    });
-
-  $scope.updateMap = function () {
-    $http.put('/api/maps/' + $routeParams.id, $scope.form).
-      success(function(data) {
-        $location.url('/maps/' + $routeParams.id);
-      });
-  };
-}
-
-function DeleteMapCtrl($scope, $http, $location, $routeParams) {
-  $http.get('/api/maps/' + $routeParams.id).
-    success(function(data) {
-      $scope.map = data.map;
-    });
-
-  $scope.deleteMap = function() {
-    $http.delete('/api/maps/' + $routeParams.id).
-      success(function(data) {
-        $location.url('/');
-      });
-  };
-}
-
-function GeolocationCtrl($scope, socket, $cookies, $log) {
-
   // Enable the new Google Maps visuals until it gets enabled by default.
   // See http://googlegeodevelopers.blogspot.ca/2013/05/a-fresh-new-look-for-maps-api-for-all.html
   google.maps.visualRefresh = true;
 
   angular.extend($scope, {
 
-    /** the initial center of the map */
+    // the initial center of the map
     center: {
       latitude: 45,
       longitude: -73
     },
 
-    /** the initial zoom level of the map */
+    // the initial zoom level of the map
     zoom: 12,
 
-    /** list of markers to put in the map */
+    // list of markers to put in the map
     markers: [],
 
     // These 2 properties will be set when clicking on the map
@@ -88,34 +49,35 @@ function GeolocationCtrl($scope, socket, $cookies, $log) {
     }
   });
 
-  // Load marker from previous session
-  watchPosition();
+  $http.get('/api/maps/' + $routeParams.id).
+    success(function(data) {
+      $scope.map = data.map;
+
+      $cookies[$scope.map._id, 'peopleMarker'] = JSON.stringify({});
+      $cookies[$scope.map._id, 'meetMarker'] = JSON.stringify({});
+
+      socket.emit('maps:show', {id: $scope.map._id}, function(data) {
+        // $log.log("data: ", data);
+        $scope.markers = data.markers;
+        configMarkers();
+        watchPosition();
+      });
+    });
 
   // Socket listeners
-  // ================
 
-  socket.on('init', function(data) {
-    $scope.markers = data;
-    configMarkers();
-  });
+  socket.on('markers:create', pushCallback);
 
-  socket.on('markers:create', function(data) {
-    pushCallback(data, data.type == 'meetMarker');
-  });
-
-  socket.on('markers:update', function(data) {
-    pushCallback(data, data.type == 'meetMarker');
-  });
+  socket.on('markers:update', pushCallback);
 
   socket.on('markers:delete', function(data) {
-    var index = findMarkerIndex(data);
+    var index = findMarkerIndex(data.marker);
     if (index != -1) {
       $scope.markers.splice(index, 1);
     }
   });
 
   // Private helpers
-  // ===============
 
   function findMarkerIndex(marker) {
     var index = -1;
@@ -126,6 +88,7 @@ function GeolocationCtrl($scope, socket, $cookies, $log) {
         return;
       }
     });
+    // $log.log("findMarkerIndex: ", index, ", indexOf: ", $scope.markers.indexOf(marker));
 
     return index;
   }
@@ -175,13 +138,8 @@ function GeolocationCtrl($scope, socket, $cookies, $log) {
         e.data.infoWindow = $scope[type].infoWindow;
       }
       else {
-        // delete $cookies[type];
-        if ($cookies[type]) {
-          var m = JSON.parse($cookies[type]);
-          if (m) {
-            e.data.infoWindow = m.infoWindow;
-          }
-        }
+        var m = JSON.parse($cookies[$scope.map._id, type]);
+        e.data.infoWindow = m.infoWindow;
       }
     }
     else {
@@ -191,17 +149,16 @@ function GeolocationCtrl($scope, socket, $cookies, $log) {
     e.data.latitude = lat;
     e.data.longitude = lng;
 
-    // $log.log("e: ", e);
-
     socket.emit(e.name, e.data, function(data) {
-      $scope[data.type] = data;
-      $cookies[data.type] = JSON.stringify(data);
-      pushCallback(data, true);
+      $scope[data.marker.type] = data.marker;
+      $cookies[$scope.map._id, type] = JSON.stringify(data.marker);
+      pushCallback(data);
     });
   }
 
-  function pushCallback(marker, update) {
-    // $log.log("marker: ", marker);
+  function pushCallback(data) {
+    // $log.log("data: ", data);
+    var marker = data.marker;
     configMarker(marker);
     var index = findMarkerIndex(marker);
     if (index != -1) {
@@ -213,7 +170,6 @@ function GeolocationCtrl($scope, socket, $cookies, $log) {
   }
 
   // Methods published to the scope
-  // ==============================
 
   $scope.updatePeopleMarker = function() {
     if ($scope['peopleMarker'].infoWindow.length > 0) {
@@ -226,5 +182,33 @@ function GeolocationCtrl($scope, socket, $cookies, $log) {
       pushMarker('meetMarker');
     }
   }
+}
 
+function EditMapCtrl($scope, $http, $location, $routeParams) {
+  $scope.form = {};
+  $http.get('/api/maps/' + $routeParams.id).
+    success(function(data) {
+      $scope.form = data.map;
+    });
+
+  $scope.updateMap = function () {
+    $http.put('/api/maps/' + $routeParams.id, $scope.form).
+      success(function(data) {
+        $location.url('/maps/' + $routeParams.id);
+      });
+  };
+}
+
+function DeleteMapCtrl($scope, $http, $location, $routeParams) {
+  $http.get('/api/maps/' + $routeParams.id).
+    success(function(data) {
+      $scope.map = data.map;
+    });
+
+  $scope.deleteMap = function() {
+    $http.delete('/api/maps/' + $routeParams.id).
+      success(function(data) {
+        $location.url('/');
+      });
+  };
 }

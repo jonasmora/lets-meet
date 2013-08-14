@@ -3,14 +3,7 @@
  */
 
 var Map = require("../models/map").Map;
-
-// Map.collection.remove(function() {});
-
-// var map;
-// map = new Map({title: "Title 1", description: "Description 1"});
-// map.save();
-// map = new Map({title: "Title 2", description: "Description 2"});
-// map.save();
+var Marker = require("../models/map").Marker;
 
 exports.list = function(req, res) {
   Map.find({}, function(err, maps) {
@@ -46,6 +39,10 @@ exports.update = function(req, res) {
 exports.delete = function(req, res) {
   Map.findOne({_id: req.params.id}, function(err, map) {
     if (err) throw err;
+    Marker.find({map: req.params.id}, function(err, markers) {
+      if (err) throw err;
+      markers.remove();
+    });
     map.remove();
     res.json({map: map});
   });
