@@ -11,7 +11,7 @@ function ListMapCtrl($scope, $http) {
 
 function NewMapCtrl($scope, $http, $location) {
   $scope.form = {};
-  $scope.submitMap = function() {
+  $scope.createMap = function() {
     $http.post('/api/maps', $scope.form).
       success(function(data) {
         $location.path('/');
@@ -33,7 +33,7 @@ function EditMapCtrl($scope, $http, $location, $routeParams) {
       $scope.form = data.map;
     });
 
-  $scope.editMap = function () {
+  $scope.updateMap = function () {
     $http.put('/api/maps/' + $routeParams.id, $scope.form).
       success(function(data) {
         $location.url('/maps/' + $routeParams.id);
@@ -50,13 +50,8 @@ function DeleteMapCtrl($scope, $http, $location, $routeParams) {
   $scope.deleteMap = function() {
     $http.delete('/api/maps/' + $routeParams.id).
       success(function(data) {
-        console.log("data: ", data);
         $location.url('/');
       });
-  };
-
-  $scope.home = function() {
-    $location.url('/');
   };
 }
 

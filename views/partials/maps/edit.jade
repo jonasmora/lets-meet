@@ -1,8 +1,18 @@
 div(ng-controller="EditMapCtrl")
   h2 Edit Map
-  label(for='title') Title:
-  input(ng-model='form.title', name='title')
-  p Description:
-  textarea(ng-model='form.description', cols='50', rows='15')
-  p
-    button(ng-click='editMap()') Edit Map
+  form(class="form-horizontal")
+    div(class="control-group")
+      label(class="control-label") Title:
+      div(class="controls")
+        input(type="text", ng-model="form.title", placeholder="Title")
+    div(class="control-group")
+        label(class="control-label") Description:
+        div(class="controls")
+          textarea(ng-model="form.description", placeholder="Description")
+
+    a(class="btn", href="/")
+      i(class="icon-remove")
+      | Cancel
+    button(type="submit", class="btn btn-primary", ng-click="updateMap()")
+      i(class="icon-ok icon-white")
+      | Edit Map

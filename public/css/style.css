@@ -2,6 +2,8 @@ body {
   padding: 50px;
 }
 a.btn,
-a.btn i {
+a.btn i,
+button,
+button i {
   margin-right: 4px;
 }
