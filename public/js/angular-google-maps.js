@@ -468,8 +468,6 @@
                   latitude: e.latLng.lat(),
                   longitude: e.latLng.lng() 
                 };
-                
-                scope.markers.push(cm);
               }
               else {
                 cm.latitude = e.latLng.lat();
