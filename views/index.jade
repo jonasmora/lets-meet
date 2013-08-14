@@ -9,6 +9,11 @@ block body
 
         div(ng-view)
 
+  //- Include the maps javascript with sensor=true because this code is using a
+  //- sensor (a GPS locator) to determine the user's location.
+  //- See: https://developers.google.com/apis/maps/documentation/javascript/basics#SpecifyingSensor
+  script(src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true", type="text/javascript")
+
   script(src='/socket.io/socket.io.js')
   script(src='/js/lib/angular/angular.min.js')
   script(src='/js/lib/angular-bootstrap/ui-bootstrap-tpls.min.js')

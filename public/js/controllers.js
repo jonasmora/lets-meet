@@ -19,11 +19,13 @@ function NewMapCtrl($scope, $http, $location) {
   };
 }
 
-function ShowMapCtrl($scope, $http, $routeParams) {
+function ShowMapCtrl($scope, $http, $routeParams, socket, $cookies, $log) {
   $http.get('/api/maps/' + $routeParams.id).
     success(function(data) {
       $scope.map = data.map;
     });
+
+  GeolocationCtrl($scope, socket, $cookies, $log);
 }
 
 function EditMapCtrl($scope, $http, $location, $routeParams) {
@@ -55,7 +57,7 @@ function DeleteMapCtrl($scope, $http, $location, $routeParams) {
   };
 }
 
-function GeolocationListCtrl($scope, socket, $cookies, $timeout, $http, $log) {
+function GeolocationCtrl($scope, socket, $cookies, $log) {
 
   // Enable the new Google Maps visuals until it gets enabled by default.
   // See http://googlegeodevelopers.blogspot.ca/2013/05/a-fresh-new-look-for-maps-api-for-all.html
