@@ -2,12 +2,10 @@ extends layout
 
 block body
   div(class="container")
-    div(class="row")
-      div(class="span8 offset2")
-        div(class="hero-unit")
-          h1 Let's Meet
+    div(class="hero-unit")
+      h1 Let's Meet
 
-        div(ng-view)
+    div(ng-view)
 
   //- Include the maps javascript with sensor=true because this code is using a
   //- sensor (a GPS locator) to determine the user's location.

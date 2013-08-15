@@ -7,3 +7,39 @@ button,
 button i {
   margin-right: 4px;
 }
+.container {
+  width: 100%;
+}
+@media (max-width: 768px) {
+  body {
+    padding: 20px;
+  }
+  .hero-unit {
+    padding: 20px;
+  }
+  .hero-unit h1 {
+    font-size: 30px;
+  }
+  .form-horizontal .control-label {
+    width: 60px;
+  }
+  .form-horizontal .controls {
+    margin-left: 80px;
+  }
+  input,
+  textarea,
+  .uneditable-input {
+    width: 142px;
+  }
+  table#maps th:first-child,
+  table#maps td:first-child {
+    display: none;
+  }
+  table#maps .btn-small {
+    padding: 0 6px;
+    font-size: 10.5px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+  }
+}
