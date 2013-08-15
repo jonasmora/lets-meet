@@ -12,7 +12,7 @@ button i {
 }
 @media (max-width: 768px) {
   body {
-    padding: 20px;
+    padding: 30px;
   }
   .hero-unit {
     padding: 20px;
@@ -21,10 +21,10 @@ button i {
     font-size: 30px;
   }
   .form-horizontal .control-label {
-    width: 60px;
+    width: 50px;
   }
   .form-horizontal .controls {
-    margin-left: 80px;
+    margin-left: 70px;
   }
   input,
   textarea,
@@ -41,5 +41,13 @@ button i {
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
+  }
+}
+@media (max-width: 480px) {
+  table#maps .btn-small i {
+    margin-right: 0;
+  }
+  table#maps .btn-small span {
+    display: none;
   }
 }
