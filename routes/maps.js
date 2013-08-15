@@ -3,47 +3,15 @@
  */
 
 var Map = require("../models/map").Map;
-var Marker = require("../models/map").Marker;
-
-exports.list = function(req, res) {
-  Map.find({}, function(err, maps) {
-    if (err) throw err;
-    res.json({maps: maps});
-  });
-};
-
-exports.create = function(req, res) {
-  var map = new Map(req.body);
-  map.save();
-  res.json({map: map});
-};
 
 exports.show = function(req, res) {
   Map.findOne({_id: req.params.id}, function(err, map) {
     if (err) throw err;
-    res.json({map: map});
-  });
-};
-
-exports.update = function(req, res) {
-  Map.findOne({_id: req.params.id}, function(err, map) {
-    if (err) throw err;
-    Object.keys(req.body).forEach(function(key) {
-      map[key] = req.body[key];
-    });
-    map.save();
-    res.json({map: map});
-  });
-};
-
-exports.delete = function(req, res) {
-  Map.findOne({_id: req.params.id}, function(err, map) {
-    if (err) throw err;
-    Marker.find({map: req.params.id}, function(err, markers) {
-      if (err) throw err;
-      markers.remove();
-    });
-    map.remove();
+    if (!map) {
+      var map = new Map();
+      map._id = req.params.id;
+      map.save();
+    }
     res.json({map: map});
   });
 };

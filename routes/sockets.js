@@ -15,7 +15,7 @@ module.exports = function(io, socket) {
   // Set current map, set meet marker and retrieve markers
   socket.on('maps:show', function(data, fn) {
     if (data.id) {
-      socket.join(data.id);  
+      socket.join(data.id);
     }
     Map.findOne({_id: data.id}, function(err, m) {
       if (err) throw err;
@@ -57,13 +57,19 @@ module.exports = function(io, socket) {
 
   // clean up when a user leaves, and broadcast it to other users
   socket.on('disconnect', function() {
-    if (map) {
-      socket.leave(map.id);  
-    }
     var marker = markers.peopleMarker;
     if (marker) {
       marker.remove();
       broadcast('markers:delete', marker);
+    }
+    if (map) {
+      socket.leave(map.id);
+      Marker.find({map: map.id, type: 'peopleMarker'}, function(err, markers) {
+        if (err) throw err;
+        if (markers.length == 0) {
+          map.remove();
+        }
+      });
     }
   });
 };

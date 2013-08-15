@@ -35,16 +35,12 @@ if ('development' == app.get('env')) {
 }
 
 // Routes
-app.get('/', routes.index);
-app.get('/maps*', routes.index);
-app.get('/partials/maps/:name', routes.maps);
+app.get('/', routes.create_map);
+app.get('/maps/:id', routes.index);
+app.get('/partials/maps/show', routes.show_map);
 
 // Maps JSON API
-app.get('/api/maps', maps.list);
-app.post('/api/maps', maps.create);
 app.get('/api/maps/:id', maps.show);
-app.put('/api/maps/:id', maps.update);
-app.delete('/api/maps/:id', maps.delete);
 
 var server = http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

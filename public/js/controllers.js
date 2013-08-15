@@ -2,23 +2,6 @@
 
 /* Controllers */
 
-function ListMapCtrl($scope, $http) {
-  $http.get('/api/maps').
-    success(function(data) {
-      $scope.maps = data.maps;
-    });
-}
-
-function NewMapCtrl($scope, $http, $location) {
-  $scope.form = {};
-  $scope.createMap = function() {
-    $http.post('/api/maps', $scope.form).
-      success(function(data) {
-        $location.path('/');
-      });
-  };
-}
-
 function ShowMapCtrl($scope, $http, $routeParams, socket, $cookies, $log) {
   // Enable the new Google Maps visuals until it gets enabled by default.
   // See http://googlegeodevelopers.blogspot.ca/2013/05/a-fresh-new-look-for-maps-api-for-all.html
@@ -48,6 +31,8 @@ function ShowMapCtrl($scope, $http, $routeParams, socket, $cookies, $log) {
       }
     }
   });
+
+  $scope.alerts = [{type: 'info', title: 'Hey!', content: 'Share this url with friends and set up a meeting place.'}];
 
   $http.get('/api/maps/' + $routeParams.id).
     success(function(data) {
@@ -182,33 +167,4 @@ function ShowMapCtrl($scope, $http, $routeParams, socket, $cookies, $log) {
       pushMarker('meetMarker');
     }
   }
-}
-
-function EditMapCtrl($scope, $http, $location, $routeParams) {
-  $scope.form = {};
-  $http.get('/api/maps/' + $routeParams.id).
-    success(function(data) {
-      $scope.form = data.map;
-    });
-
-  $scope.updateMap = function () {
-    $http.put('/api/maps/' + $routeParams.id, $scope.form).
-      success(function(data) {
-        $location.url('/maps/' + $routeParams.id);
-      });
-  };
-}
-
-function DeleteMapCtrl($scope, $http, $location, $routeParams) {
-  $http.get('/api/maps/' + $routeParams.id).
-    success(function(data) {
-      $scope.map = data.map;
-    });
-
-  $scope.deleteMap = function() {
-    $http.delete('/api/maps/' + $routeParams.id).
-      success(function(data) {
-        $location.url('/');
-      });
-  };
 }
