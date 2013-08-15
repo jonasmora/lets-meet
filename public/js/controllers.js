@@ -53,11 +53,7 @@ function ShowMapCtrl($scope, $http, $routeParams, socket, $cookies, $log) {
     success(function(data) {
       $scope.map = data.map;
 
-      $cookies[$scope.map._id, 'peopleMarker'] = JSON.stringify({});
-      $cookies[$scope.map._id, 'meetMarker'] = JSON.stringify({});
-
       socket.emit('maps:show', {id: $scope.map._id}, function(data) {
-        // $log.log("data: ", data);
         $scope.markers = data.markers;
         configMarkers();
         watchPosition();
@@ -88,7 +84,6 @@ function ShowMapCtrl($scope, $http, $routeParams, socket, $cookies, $log) {
         return;
       }
     });
-    // $log.log("findMarkerIndex: ", index, ", indexOf: ", $scope.markers.indexOf(marker));
 
     return index;
   }
@@ -138,8 +133,13 @@ function ShowMapCtrl($scope, $http, $routeParams, socket, $cookies, $log) {
         e.data.infoWindow = $scope[type].infoWindow;
       }
       else {
-        var m = JSON.parse($cookies[$scope.map._id, type]);
-        e.data.infoWindow = m.infoWindow;
+        var cookie = $cookies[$scope.map._id + type];
+        if (cookie) {
+          var marker = JSON.parse(cookie);
+          if (marker.infoWindow && marker.infoWindow.length > 0) {
+            e.data.infoWindow = marker.infoWindow;
+          }
+        }
       }
     }
     else {
@@ -151,7 +151,7 @@ function ShowMapCtrl($scope, $http, $routeParams, socket, $cookies, $log) {
 
     socket.emit(e.name, e.data, function(data) {
       $scope[data.marker.type] = data.marker;
-      $cookies[$scope.map._id, type] = JSON.stringify(data.marker);
+      $cookies[$scope.map._id + type] = JSON.stringify(data.marker);
       pushCallback(data);
     });
   }
