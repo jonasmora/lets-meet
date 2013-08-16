@@ -1,4 +1,4 @@
-div(ng-controller="ShowMapCtrl")
+div(class="ng-controller", ng-controller="ShowMapCtrl")
   div(class="alerts")
     div(class="alert fade", ng-repeat="alert in alerts", bs-alert="alert")
 
@@ -23,4 +23,4 @@ div(ng-controller="ShowMapCtrl")
     draggable="true",
     fit="false",
     events="events",
-    style="height: 500px; width: 100%")
+    style="height: 100%; width: 100%")

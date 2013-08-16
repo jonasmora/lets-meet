@@ -1,5 +1,11 @@
-body {
-  padding: 50px;
+html,
+body,
+.container,
+.ng-view,
+.ng-controller {
+  height: 100%;
+  padding: 0;
+  width: 100%;
 }
 a.btn,
 a.btn i,
@@ -7,47 +13,24 @@ button,
 button i {
   margin-right: 4px;
 }
-.container {
+.alerts,
+form {
+  display: none;
+}
+.hero-unit {
+  background: rgba(0,0,0,0.5);
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  margin: 0;
+  padding: 10px;
+  position: fixed;
+  top: 0;
   width: 100%;
+  z-index: 1;
 }
-@media (max-width: 768px) {
-  body {
-    padding: 30px;
-  }
-  .hero-unit {
-    padding: 20px;
-  }
-  .hero-unit h1 {
-    font-size: 30px;
-  }
-  .form-horizontal .control-label {
-    width: 50px;
-  }
-  .form-horizontal .controls {
-    margin-left: 70px;
-  }
-  input,
-  textarea,
-  .uneditable-input {
-    width: 142px;
-  }
-  table#maps th:first-child,
-  table#maps td:first-child {
-    display: none;
-  }
-  table#maps .btn-small {
-    padding: 0 6px;
-    font-size: 10.5px;
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    border-radius: 3px;
-  }
-}
-@media (max-width: 480px) {
-  table#maps .btn-small i {
-    margin-right: 0;
-  }
-  table#maps .btn-small span {
-    display: none;
-  }
+.hero-unit h1 {
+  color: #fff;
+  font-size: 20px;
+  margin: 0;
 }

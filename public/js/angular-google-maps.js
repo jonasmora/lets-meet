@@ -93,7 +93,16 @@
             center: that.center,
             zoom: that.zoom,
             draggable: that.draggable,
-            mapTypeId : google.maps.MapTypeId.ROADMAP
+            mapTypeId : google.maps.MapTypeId.ROADMAP,
+            mapTypeControlOptions: {
+              position:google.maps.ControlPosition.RIGHT_BOTTOM
+            },
+            panControlOptions: {
+              position:google.maps.ControlPosition.LEFT_BOTTOM
+            },
+            zoomControlOptions: {
+              position:google.maps.ControlPosition.LEFT_BOTTOM
+            }
           }));
           
           google.maps.event.addListener(_instance, "dragstart",
