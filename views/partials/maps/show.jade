@@ -1,16 +1,12 @@
 div(class="ng-controller", ng-controller="ShowMapCtrl")
-  div(class="alerts")
-    div(class="alert fade", ng-repeat="alert in alerts", bs-alert="alert")
+  div(class="hero-unit")
+    h1(class="pull-left") Let's Meet
 
-  form(class="form-horizontal")
-    div(class="control-group")
-      label(class="control-label") Me:
-      div(class="controls")
-        input(type="text", ng-model="peopleMarker.infoWindow", placeholder="Identify yourself", ng-change="updatePeopleMarker()")
-    div(class="control-group")
-        label(class="control-label") Meet:
-        div(class="controls")
-          input(type="text", ng-model="meetMarker.infoWindow", placeholder="Identify the meet point", ng-change="updateMeetMarker()")
+    div(class="pull-right")
+      button(type="button", class="btn btn-mini btn-link", bs-modal="'/partials/maps/modal'")
+        i(class="icon-map-marker icon-white")
+      button(type="button", class="btn btn-mini btn-link", bs-modal="'/partials/help'")
+        i(class="icon-question-sign icon-white")
 
   div(
     class="google-map",

@@ -32,8 +32,6 @@ function ShowMapCtrl($scope, $http, $routeParams, socket, $cookies, $log) {
     }
   });
 
-  $scope.alerts = [{type: 'info', title: 'Hey!', content: 'Share this url with friends and set up a meeting place.'}];
-
   $http.get('/api/maps/' + $routeParams.id).
     success(function(data) {
       $scope.map = data.map;
@@ -41,15 +39,14 @@ function ShowMapCtrl($scope, $http, $routeParams, socket, $cookies, $log) {
       socket.emit('maps:show', {id: $scope.map._id}, function(data) {
         $scope.markers = data.markers;
         configMarkers();
+        // $scope['peopleMarker'] = JSON.parse($cookies[$scope.map._id + 'peopleMarker']);
         watchPosition();
       });
     });
 
   // Socket listeners
 
-  socket.on('markers:create', pushCallback);
-
-  socket.on('markers:update', pushCallback);
+  socket.on('markers:pushed', pushCallback);
 
   socket.on('markers:delete', function(data) {
     var index = findMarkerIndex(data.marker);
@@ -109,34 +106,15 @@ function ShowMapCtrl($scope, $http, $routeParams, socket, $cookies, $log) {
   }
 
   function pushMarker(type, lat, lng) {
-    var e = {};
+    var marker = {
+      type: type,
+      latitude: lat,
+      longitude: lng
+    };
 
-    if (!$scope[type] || !$scope[type]._id) {
-      e.name = 'markers:create';
-      e.data = {type: type};
-      if ($scope[type]) {
-        e.data.infoWindow = $scope[type].infoWindow;
-      }
-      else {
-        var cookie = $cookies[$scope.map._id + type];
-        if (cookie) {
-          var marker = JSON.parse(cookie);
-          if (marker.infoWindow && marker.infoWindow.length > 0) {
-            e.data.infoWindow = marker.infoWindow;
-          }
-        }
-      }
-    }
-    else {
-      e.name = 'markers:update';
-      e.data = {type: type, _id: $scope[type]._id, infoWindow: $scope[type].infoWindow};
-    }
-    e.data.latitude = lat;
-    e.data.longitude = lng;
-
-    socket.emit(e.name, e.data, function(data) {
+    socket.emit('markers:push', marker, function(data) {
       $scope[data.marker.type] = data.marker;
-      $cookies[$scope.map._id + type] = JSON.stringify(data.marker);
+      // $cookies[$scope.map._id + type] = JSON.stringify(data.marker);
       pushCallback(data);
     });
   }

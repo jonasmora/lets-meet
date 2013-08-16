@@ -38,6 +38,8 @@ if ('development' == app.get('env')) {
 app.get('/', routes.create_map);
 app.get('/maps/:id', routes.index);
 app.get('/partials/maps/show', routes.show_map);
+app.get('/partials/help', routes.help);
+app.get('/partials/maps/modal', routes.edit_markers);
 
 // Maps JSON API
 app.get('/api/maps/:id', maps.show);

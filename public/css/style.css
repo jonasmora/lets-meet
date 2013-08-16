@@ -13,17 +13,13 @@ button,
 button i {
   margin-right: 4px;
 }
-.alerts,
-form {
-  display: none;
-}
 .hero-unit {
   background: rgba(0,0,0,0.5);
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
   margin: 0;
-  padding: 10px;
+  padding: 10px 0;
   position: fixed;
   top: 0;
   width: 100%;
@@ -31,6 +27,12 @@ form {
 }
 .hero-unit h1 {
   color: #fff;
-  font-size: 20px;
+  font-size: 30px;
   margin: 0;
+}
+.hero-unit .pull-left {
+  padding-left: 10px;
+}
+.hero-unit .pull-right {
+  padding-right: 10px;
 }

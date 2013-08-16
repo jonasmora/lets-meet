@@ -18,3 +18,11 @@ exports.create_map = function(req, res){
 exports.show_map = function (req, res) {
   res.render('partials/maps/show');
 };
+
+exports.help = function (req, res) {
+  res.render('partials/help');
+};
+
+exports.edit_markers = function (req, res) {
+  res.render('partials/maps/modal');
+};

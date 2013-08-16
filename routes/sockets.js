@@ -31,28 +31,23 @@ module.exports = function(io, socket) {
     });
   });
 
-  // notify other clients that a new marker was created
-  socket.on('markers:create', function(data, fn) {
-    var marker = new Marker(data);
-    marker.session = socket.id;
-    marker.map = map;
-    marker.save();
-    markers[data.type] = marker;
-    fn({marker: marker});
-    broadcast('markers:create', marker);
-  });
-
-  // notify other clients that a marker was updated
-  socket.on('markers:update', function(data, fn) {
+  // notify other clients that a marker was pushed
+  socket.on('markers:push', function(data, fn) {
     var marker = markers[data.type];
     if (marker) {
       Object.keys(data).forEach(function(key) {
         marker[key] = data[key];
       });
-      marker.save();
-      fn({marker: marker});
-      broadcast('markers:update', marker);
     }
+    else {
+      var marker = new Marker(data);
+      marker.session = socket.id;
+      marker.map = map;
+      markers[data.type] = marker;
+    }
+    marker.save();
+    fn({marker: marker});
+    broadcast('markers:pushed', marker);
   });
 
   // clean up when a user leaves, and broadcast it to other users
