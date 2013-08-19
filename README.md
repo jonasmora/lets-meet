@@ -5,6 +5,8 @@ Let's Meet is a simple application I built to learn the MEAN stack (Mongo, Expre
 
 Mongoose is used to interface with a Mongodb database.
 
+Here is a [demo](http://letsmeet.outboxlabs.com/).
+
 Steps to get this working
 -------------------------
 
