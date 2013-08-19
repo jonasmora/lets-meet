@@ -36,13 +36,37 @@ button i {
 .hero-unit .pull-right {
   padding-right: 10px;
 }
-.modal {
-  margin-left: -182px;
-  width: 372px;
+@media (max-width: 768px) {
+  .modal {
+    margin-left: -200px;
+    width: 400px;
+  }
+  .form-horizontal .control-label {
+    width: 120px;
+  }
+  .form-horizontal .controls {
+    margin-left: 140px;
+  }
+  input,
+  textarea,
+  .uneditable-input {
+    width: 180px;
+  }
 }
-.form-horizontal .control-label {
-  width: 100px;
-}
-.form-horizontal .controls {
-  margin-left: 120px;
+@media (max-width: 480px) {
+  .modal {
+    margin-left: -150px;
+    width: 300px;
+  }
+  .form-horizontal .control-label {
+    width: 100px;
+  }
+  .form-horizontal .controls {
+    margin-left: 120px;
+  }
+  input,
+  textarea,
+  .uneditable-input {
+    width: 120px;
+  }
 }
