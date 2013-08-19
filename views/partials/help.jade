@@ -1,4 +1,13 @@
 div(class="modal-header")
   button(type="button", class="close", data-dismiss="modal", aria-hidden="true") ×
   h3 Help
-div(class="modal-body") Explain how to use the site
+div(class="modal-body")
+  ul
+    li Click anywhere in the map to set up a meeting place.
+    li
+      span Share the url with friends.
+      br
+      a(href="{{ location.absUrl() }}") {{ location.absUrl() }}
+    li Access the configuration section to edit your or the meeting tag.
+    li The green marker it's you, the red marker is the meeting place and the blue markers are your friends.
+    li Have fun!

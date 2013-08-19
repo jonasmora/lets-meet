@@ -11,4 +11,6 @@ var app = angular.module('letsMeet', ['google-maps', 'ngCookies', '$strap.direct
         redirectTo: '/'
       });
     $locationProvider.html5Mode(true);
-  }]);
+  }]).run(function($rootScope, $location) {
+    $rootScope.location = $location;
+  });
