@@ -1,8 +1,8 @@
 html,
 body,
 .container,
-.ng-view,
-.ng-controller {
+.view,
+.controller {
   height: 100%;
   padding: 0;
   width: 100%;
