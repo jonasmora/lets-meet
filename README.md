@@ -1,7 +1,7 @@
 Let's Meet
 ==========
 
-Let's Meet is a simple application I build to lear the MEAN stack (Mongo, Express, AngularJS and node.js). It allows users to easily share their position on a map and set up a meeting place.
+Let's Meet is a simple application I built to learn the MEAN stack (Mongo, Express, AngularJS and node.js). It allows users to easily share their position on a map and set up a meeting place.
 
 Mongoose is used to interface with a Mongodb database.
 
