@@ -59,12 +59,13 @@ module.exports = function(io, socket) {
     }
     if (map) {
       socket.leave(map.id);
-      Marker.find({map: map.id, type: 'peopleMarker'}, function(err, markers) {
-        if (err) throw err;
-        if (markers.length == 0) {
-          map.remove();
-        }
-      });
+      // TODO: Add updated_at to maps, delete the old ones including the markers
+      // Marker.find({map: map.id, type: 'peopleMarker'}, function(err, markers) {
+      //   if (err) throw err;
+      //   if (markers.length == 0) {
+      //     map.remove();
+      //   }
+      // });
     }
   });
 };
