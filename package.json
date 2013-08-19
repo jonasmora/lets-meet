@@ -12,5 +12,9 @@
     "stylus": "*",
     "mongodb" : ">=0.9.6-7",
     "mongoose" : ">=3.6"
+  },
+  "engines": {
+    "node": "0.10.x",
+    "npm": "1.2.x"
   }
 }
