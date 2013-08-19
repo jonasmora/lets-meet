@@ -36,3 +36,13 @@ button i {
 .hero-unit .pull-right {
   padding-right: 10px;
 }
+.modal {
+  margin-left: -182px;
+  width: 372px;
+}
+.form-horizontal .control-label {
+  width: 100px;
+}
+.form-horizontal .controls {
+  margin-left: 120px;
+}
