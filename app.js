@@ -13,7 +13,7 @@ var express = require('express')
 var app = express();
 
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/letsMeet', {safe: true});
+mongoose.connect(process.env.DATABASE_URL || 'mongodb://localhost/lets-meet', {safe: true});
 
 // all environments
 app.set('port', process.env.PORT || 3000);
