@@ -47,7 +47,7 @@ module.exports = function(io, socket) {
     }
     marker.save();
     fn({marker: marker});
-    broadcast('markers:pushed', marker);
+    broadcast('markers:push', marker);
   });
 
   // clean up when a user leaves, and broadcast it to other users

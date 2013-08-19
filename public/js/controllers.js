@@ -27,10 +27,19 @@ function ShowMapCtrl($scope, $http, $routeParams, socket, $cookies, $log) {
 
     events: {
       click: function() {
-        pushMarker('meetMarker', $scope.latitude, $scope.longitude);
+        angular.extend($scope.meetMarker, {
+          latitude: $scope.latitude,
+          longitude: $scope.longitude
+        });
+        pushMarker('meetMarker');
       }
     }
   });
+
+  ['peopleMarker', 'meetMarker'].forEach(function(type) {
+    $scope[type] = {type: type};
+  });
+  $scope.modal = {};
 
   $http.get('/api/maps/' + $routeParams.id).
     success(function(data) {
@@ -39,14 +48,17 @@ function ShowMapCtrl($scope, $http, $routeParams, socket, $cookies, $log) {
       socket.emit('maps:show', {id: $scope.map._id}, function(data) {
         $scope.markers = data.markers;
         configMarkers();
-        // $scope['peopleMarker'] = JSON.parse($cookies[$scope.map._id + 'peopleMarker']);
+
+        $scope.peopleMarker.infoWindow = $cookies[$scope.map._id];
+        $scope.modal.peopleMarkerTag = $cookies[$scope.map._id];
+
         watchPosition();
       });
     });
 
   // Socket listeners
 
-  socket.on('markers:pushed', pushCallback);
+  socket.on('markers:push', pushCallback);
 
   socket.on('markers:delete', function(data) {
     var index = findMarkerIndex(data.marker);
@@ -71,11 +83,12 @@ function ShowMapCtrl($scope, $http, $routeParams, socket, $cookies, $log) {
   }
 
   function configMarker(marker) {
-    if ($scope.peopleMarker && marker._id == $scope.peopleMarker._id) {
+    if ($scope.peopleMarker._id == marker._id) {
       marker.icon = 'http://maps.google.com/mapfiles/ms/icons/green-dot.png';
     }
     else if (marker.type == 'meetMarker') {
       $scope.meetMarker = marker;
+      $scope.modal.meetMarkerTag = marker.infoWindow;
       marker.icon = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
     }
     else {
@@ -84,7 +97,7 @@ function ShowMapCtrl($scope, $http, $routeParams, socket, $cookies, $log) {
   }
 
   function configMarkers() {
-    angular.forEach($scope.markers, function(marker, index) {
+    $scope.markers.forEach(function(marker) {
       configMarker(marker);
     });
   }
@@ -100,27 +113,43 @@ function ShowMapCtrl($scope, $http, $routeParams, socket, $cookies, $log) {
           longitude: lng
         };
 
-        pushMarker('peopleMarker', lat, lng);
+        angular.extend($scope.peopleMarker, $scope.center);
+
+        pushMarker('peopleMarker');
       });
     }
   }
 
-  function pushMarker(type, lat, lng) {
-    var marker = {
-      type: type,
-      latitude: lat,
-      longitude: lng
-    };
+  function filterMarker(type, keys) {
+    var marker = $scope[type];
+    var data = {};
+    keys.forEach(function(key) {
+      if (marker[key]) {
+        data[key] = marker[key];
+      }
+    });
+    return data;
+  }
 
-    socket.emit('markers:push', marker, function(data) {
-      $scope[data.marker.type] = data.marker;
-      // $cookies[$scope.map._id + type] = JSON.stringify(data.marker);
+  function pushMarker(type) {
+    var data = filterMarker(type, ['type', 'latitude', 'longitude', 'infoWindow']);
+
+    $log.log("pushMarker data: ", data);
+
+    socket.emit('markers:push', data, function(data) {
+      $scope[type] = data.marker;
+
+      if (type == 'peopleMarker') {
+        $cookies[$scope.map._id] = $scope[type].infoWindow;
+      }
+      $scope.modal[type + 'Tag'] = data.marker.infoWindow;
+
       pushCallback(data);
     });
   }
 
   function pushCallback(data) {
-    // $log.log("data: ", data);
+    $log.log("pushCallback data: ", data);
     var marker = data.marker;
     configMarker(marker);
     var index = findMarkerIndex(marker);
@@ -134,15 +163,13 @@ function ShowMapCtrl($scope, $http, $routeParams, socket, $cookies, $log) {
 
   // Methods published to the scope
 
-  $scope.updatePeopleMarker = function() {
-    if ($scope['peopleMarker'].infoWindow.length > 0) {
-      pushMarker('peopleMarker');
-    }
-  }
-
-  $scope.updateMeetMarker = function() {
-    if ($scope['meetMarker'].infoWindow.length > 0) {
-      pushMarker('meetMarker');
-    }
+  $scope.saveModal = function(dismiss) {
+    ['peopleMarker', 'meetMarker'].forEach(function(type) {
+      if ($scope.modal[type + 'Tag'] != $scope[type].infoWindow) {
+        $scope[type].infoWindow = $scope.modal[type + 'Tag'];
+        pushMarker(type);
+      }
+    });
+    dismiss();
   }
 }
