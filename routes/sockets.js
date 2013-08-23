@@ -45,7 +45,10 @@ module.exports = function(io, socket) {
       marker.map = map;
       markers[data.type] = marker;
     }
+    marker.updated_at = new Date();
     marker.save();
+    map.updated_at = marker.updated_at;
+    map.save();
     fn({marker: marker});
     broadcast('markers:push', marker);
   });
@@ -59,13 +62,6 @@ module.exports = function(io, socket) {
     }
     if (map) {
       socket.leave(map.id);
-      // TODO: Add updated_at to maps, delete the old ones including the markers
-      Marker.find({map: map.id}, function(err, markers) {
-        if (err) throw err;
-        if (markers.length == 0) {
-          map.remove();
-        }
-      });
     }
   });
 };

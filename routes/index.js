@@ -11,6 +11,7 @@ exports.index = function (req, res) {
 
 exports.create_map = function(req, res){
   var map = new Map();
+  map.updated_at = new Date();
   map.save();
   res.redirect('/maps/' + map.id);
 };
